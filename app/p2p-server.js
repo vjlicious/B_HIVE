@@ -1,13 +1,26 @@
-const Websocket = require('ws');
 
-const P2P_PORT = process.env.IP || 5001;
+const crypto = require('crypto')
+const Swarm = require('discovery-swarm')
+const defaults = require('dat-swarm-defaults')
+const getPort = require('get-port')
 
-const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const MESSAGE_TYPES = {
   chain: 'CHAIN',
   transaction: 'TRANSACTION',
   clear_transactions: 'CLEAR_TRANSACTIONS'
 };
+
+const peers = {}
+
+let connSeq = 0
+const myId = crypto.randomBytes(32)
+  
+const config = defaults({
+    id: myId, 
+})
+
+const sw = Swarm(config);
+
 
 class P2pServer {
   constructor(blockchain, transactionPool) {
@@ -15,79 +28,100 @@ class P2pServer {
     this.transactionPool = transactionPool;
     this.sockets = [];
   }
+  listen(){
+  (async () => {
+    const port = await getPort()
+    sw.listen(port)
+    console.log('Listening to port: ' + port)
+    sw.join('b_hive')
+    sw.on('connection', (conn, info) => {
+        const seq = connSeq
+        const peerId = info.id.toString('hex')
+        console.log(`Connected #${seq} to peer: ${peerId}`)
+        if (info.initiator) {
+            try {
+                conn.setKeepAlive(true, 600)
+            } catch (exception) {
+                console.log('exception', exception)
+            }
+        }
+        if (!peers[peerId]) {
+            peers[peerId] = {}
+        }
+        peers[peerId].conn = conn
+        peers[peerId].seq = seq
+        connSeq++
 
-  listen() {
-    const server = new Websocket.Server({
-      port: P2P_PORT
+        for (let id in peers) {
+          peers[id].conn.write(JSON.stringify({
+            type: MESSAGE_TYPES.chain,
+            chain: this.blockchain.chain
+          }));
+        }
+      
+        conn.on('data', data => {
+            console.log(
+              'Received Message from peer ' + peerId,
+              '----> ' + data.toString()
+            )
+          })
+        conn.on('close', () => {
+            console.log(`Connection ${seq} closed, peer id: ${peerId}`)
+            if (peers[peerId].seq === seq) {
+                delete peers[peerId]
+            }
+        })
+
+
+     
+
+
+        conn.on('message', message => {
+          const data = JSON.parse(message);
+          switch (data.type) {
+            case MESSAGE_TYPES.chain:
+              this.blockchain.replaceChain(data.chain);
+              break;
+            case MESSAGE_TYPES.transaction:
+              this.transactionPool.updateOrAddTransaction(data.transaction);
+              break;
+            case MESSAGE_TYPES.clear_transactions:
+              this.transactionPool.clear();
+              break;
+          }
+        });
+
+       
+          for (let id in peers) {
+            conn.write(JSON.stringify({
+              type: MESSAGE_TYPES.transaction
+            }));
+          }
+        
+
+
     });
-    server.on('connection', socket => this.connectSocket(socket));
+})();
 
-    this.connectToPeers();
-
-    console.log(`Listening for peer-to-peer connections on: ${P2P_PORT}`);
   }
 
-  connectToPeers() {
-    peers.forEach(peer => {
-      const socket = new Websocket(peer);
 
-      socket.on('open', () => this.connectSocket(socket));
-    });
-  }
-
-  connectSocket(socket) {
-    this.sockets.push(socket);
-    console.log('Socket connected');
-
-    this.messageHandler(socket);
-
-    this.sendChain(socket);
-  }
-
-  messageHandler(socket) {
-    socket.on('message', message => {
-      const data = JSON.parse(message);
-      switch (data.type) {
-        case MESSAGE_TYPES.chain:
-          this.blockchain.replaceChain(data.chain);
-          break;
-        case MESSAGE_TYPES.transaction:
-          this.transactionPool.updateOrAddTransaction(data.transaction);
-          break;
-        case MESSAGE_TYPES.clear_transactions:
-          this.transactionPool.clear();
-          break;
-      }
-    });
-  }
-
-  sendChain(socket) {
-    socket.send(JSON.stringify({
-      type: MESSAGE_TYPES.chain,
-      chain: this.blockchain.chain
-    }));
-  }
-
-  sendTransaction(socket, transaction) {
-    socket.send(JSON.stringify({
-      type: MESSAGE_TYPES.transaction,
-      transaction
-    }));
-  }
-
-  syncChains() {
-    this.sockets.forEach(socket => this.sendChain(socket));
-  }
-
-  broadcastTransaction(transaction) {
-    this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
-  }
-
-  broadcastClearTransactions() {
-    this.sockets.forEach(socket => socket.send(JSON.stringify({
-      type: MESSAGE_TYPES.clear_transactions
-    })));
-  }
 }
+
+
+//   syncChains() {
+//     this.sockets.forEach(socket => this.sendChain(socket));
+//   }
+
+//   broadcastTransaction(transaction) {
+//     this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
+//   }
+
+//   broadcastClearTransactions() {
+//     this.sockets.forEach(socket => socket.send(JSON.stringify({
+//       type: MESSAGE_TYPES.clear_transactions
+//     })));
+//   }
+// }
 
 module.exports = P2pServer;
