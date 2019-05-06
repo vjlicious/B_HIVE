@@ -16,44 +16,6 @@ let connSeq = 0
 const myId = crypto.randomBytes(32)
 console.log('Your identity: ' + myId.toString('hex'))
 
-// reference to redline interface
-let rl
-/**
- * Function for safely call console.log with readline interface active
- */
-function log () {
-  if (rl) {
-    rl.clearLine()    
-    rl.close()
-    rl = undefined
-  }
-  for (let i = 0, len = arguments.length; i < len; i++) {
-    console.log(arguments[i])
-  }
-  askUser()
-}
-
-/*
-* Function to get text input from user and send it to other peers
-* Like a chat :)
-*/
-const askUser = async () => {
-  rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-
-  rl.question('Send message: ', message => {
-    // Broadcast to peers
-    for (let id in peers) {
-      peers[id].conn.write(message)
-    }
-    rl.close()
-    rl = undefined
-    askUser()
-  });
-}
-
 /** 
  * Default DNS and DHT servers
  * This servers are used for peer discovery and establishing connection
@@ -70,7 +32,8 @@ const config = defaults({
 const sw = Swarm(config)
 
 
-;(async () => {
+;
+(async () => {
 
   // Choose a random unused port for listening TCP peer connections
   const port = await getPort()
@@ -82,7 +45,7 @@ const sw = Swarm(config)
    * The channel we are connecting to.
    * Peers should discover other peers in this channel
    */
-  sw.join('our-fun-channel')
+  sw.join('b_hive')
 
   sw.on('connection', (conn, info) => {
     // Connection id
@@ -99,24 +62,6 @@ const sw = Swarm(config)
         log('exception', exception)
       }
     }
-
-    conn.on('data', data => {
-      // Here we handle incomming messages
-      log(
-        'Received Message from peer ' + peerId,
-        '----> ' + data.toString()
-      )
-    })
-
-    conn.on('close', () => {
-      // Here we handle peer disconnection
-      log(`Connection ${seq} closed, peer id: ${peerId}`)
-      // If the closing connection is the last connection with the peer, removes the peer
-      if (peers[peerId].seq === seq) {
-        delete peers[peerId]
-      }
-    })
-
     // Save the connection
     if (!peers[peerId]) {
       peers[peerId] = {}
@@ -125,9 +70,25 @@ const sw = Swarm(config)
     peers[peerId].seq = seq
     connSeq++
 
-  })
+    // conn.on('data', data => {
+    //   // Here we handle incomming messages
+    //   log(
+    //     'Received Message from peer ' + peerId,
+    //     '----> ' + data.toString()
+    //   )
+    // })
 
-  // Read user message from command line
-  askUser()  
+    conn.on('close', () => {
+      // Here we handle peer disconnection
+      console.log(`Connection ${seq} closed, peer id: ${peerId}`)
+      // If the closing connection is the last connection with the peer, removes the peer
+      if (peers[peerId].seq === seq) {
+        delete peers[peerId]
+      }
+    })
+
+
+
+  })
 
 })()

@@ -1,4 +1,3 @@
-
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
 const defaults = require('dat-swarm-defaults')
@@ -14,39 +13,38 @@ const peers = {}
 
 let connSeq = 0
 const myId = crypto.randomBytes(32)
-  
+console.log('Your identity: ' + myId.toString('hex'))
+
 const config = defaults({
-    id: myId, 
+  id: myId,
 })
 
 const sw = Swarm(config);
-
-
 class P2pServer {
   constructor(blockchain, transactionPool) {
     this.blockchain = blockchain;
     this.transactionPool = transactionPool;
     this.sockets = [];
   }
-  listen(){
-  (async () => {
-    const port = await getPort()
-    sw.listen(port)
-    console.log('Listening to port: ' + port)
-    sw.join('b_hive')
-    sw.on('connection', (conn, info) => {
+  listen() {
+    (async () => {
+      const port = await getPort()
+      sw.listen(port)
+      console.log('Listening to port from p2p: ' + port)
+      sw.join('b_hive')
+      sw.on('connection', (conn, info) => {
         const seq = connSeq
         const peerId = info.id.toString('hex')
         console.log(`Connected #${seq} to peer: ${peerId}`)
         if (info.initiator) {
-            try {
-                conn.setKeepAlive(true, 600)
-            } catch (exception) {
-                console.log('exception', exception)
-            }
+          try {
+            conn.setKeepAlive(true, 600)
+          } catch (exception) {
+            console.log('exception', exception)
+          }
         }
         if (!peers[peerId]) {
-            peers[peerId] = {}
+          peers[peerId] = {}
         }
         peers[peerId].conn = conn
         peers[peerId].seq = seq
@@ -58,23 +56,19 @@ class P2pServer {
             chain: this.blockchain.chain
           }));
         }
-      
+
         conn.on('data', data => {
-            console.log(
-              'Received Message from peer ' + peerId,
-              '----> ' + data.toString()
-            )
-          })
-        conn.on('close', () => {
-            console.log(`Connection ${seq} closed, peer id: ${peerId}`)
-            if (peers[peerId].seq === seq) {
-                delete peers[peerId]
-            }
+          console.log(
+            'Received Message from peer ' + peerId,
+            '----> ' + data.toString()
+          )
         })
-
-
-     
-
+        conn.on('close', () => {
+          console.log(`Connection ${seq} closed, peer id: ${peerId}`)
+          if (peers[peerId].seq === seq) {
+            delete peers[peerId]
+          }
+        })
 
         conn.on('message', message => {
           const data = JSON.parse(message);
@@ -90,18 +84,14 @@ class P2pServer {
               break;
           }
         });
-
-       
-          for (let id in peers) {
-            conn.write(JSON.stringify({
-              type: MESSAGE_TYPES.transaction
-            }));
-          }
-        
-
-
-    });
-})();
+        for (let id in peers) {
+          conn.write(JSON.stringify({
+            type: MESSAGE_TYPES.transaction,
+            transaction: this.transactionPool
+          }));
+        }
+      });
+    })();
 
   }
 
