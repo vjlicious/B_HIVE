@@ -98,18 +98,20 @@ class P2pServer {
       }));
     }
   }
-  sendChain(conn) {
-    conn.write(JSON.stringify(this.blockchain.chain));
+  sendChain(peer) {
+    peer.conn.write(JSON.stringify(this.blockchain.chain));
   }
   syncChains() {
     for(let id in peers) {
-      peers[id].conn.write(this.sendChain(conn))
+      peers[id].conn.write(this.sendChain(peer[id]))
     }
   }
   broadcastClearTransactions() {
-    this.conn.forEach(conn => conn.write(JSON.stringify({
-      type: MESSAGE_TYPES.clear_transactions
-    })));
+    for (let id in peers) {
+      peers[id].conn.write(JSON.stringify({
+        type: MESSAGE_TYPES.clear_transactions
+      }));
+    }
   }
 }
 

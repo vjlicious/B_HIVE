@@ -8,6 +8,7 @@ const Wallet = require('../wallet');
 
 
 const TransactionPool = require('../wallet/transaction-pool');
+
 const Miner = require('./miner');
 
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -40,9 +41,10 @@ app.get('/transactions', (req, res) => {
 app.post('/transact', (req, res) => {
   const {
     recipient,
-    amount
+    amount,
+    filename
   } = req.body;
-  const transaction = wallet.createTransaction(recipient, amount, bc, tp);
+  const transaction = wallet.createTransaction(recipient, amount,filename,bc, tp);
   p2pServer.broadcastTransaction(transaction);
   res.redirect('/transactions');
 
