@@ -52,6 +52,8 @@ class P2pServer {
         peers[peerId].seq = seq
         connSeq++
         // console.log(conn,"conn element");
+        
+        
         for (let id in peers) {
           peers[id].conn.write(JSON.stringify({
             type: MESSAGE_TYPES.chain,
@@ -59,18 +61,6 @@ class P2pServer {
           }));
         }
 
-        conn.on('data', data => {
-          console.log(
-            'Received Message from peer ' + peerId,
-            '----> ' + data.toString()
-          )
-        })
-        conn.on('close', () => {
-          console.log(`Connection ${seq} closed, peer id: ${peerId}`)
-          if (peers[peerId].seq === seq) {
-            delete peers[peerId]
-          }
-        })
         conn.on('message', message => {
           const data = JSON.parse(message);
           switch (data.type) {
@@ -86,7 +76,21 @@ class P2pServer {
           }
         });
 
-      });
+        conn.on('data', data => {
+          console.log(
+            'Received Message from peer ' + peerId,
+            '----> ' + data.toString()
+          )
+        })
+
+
+      conn.on('close', () => {
+        console.log(`Connection ${seq} closed, peer id: ${peerId}`)
+        if (peers[peerId].seq === seq) {
+          delete peers[peerId]
+        }
+      })
+    });
 
     })();
   }
