@@ -28,48 +28,45 @@ class P2pServer {
     this.transactionPool = transactionPool;
     this.sockets = [];
   }
-  listen() {
-    (async () => {
-      const port = await getPort()
-      sw.listen(port)
-      console.log('Listening to port: ' + port)
-      sw.join('b_hive')
-      sw.on('connection', (conn, info) => {
-        const seq = connSeq
-        const peerId = info.id.toString('hex')
-        console.log(`Connected #${seq} to peer: ${peerId}`)
-        if (info.initiator) {
-          try {
-            conn.setKeepAlive(true, 600)
-          } catch (exception) {
-            console.log('exception', exception)
-          }
-        }
-        if (!peers[peerId]) {
-          peers[peerId] = {}
-        }
-        peers[peerId].conn = conn
-        peers[peerId].seq = seq
-        connSeq++
-        // console.log(conn,"conn element");
-        
-        
-        for (let id in peers) {
-          peers[id].conn.write(JSON.stringify({
-            type: MESSAGE_TYPES.chain,
-            chain: this.blockchain.chain
-          }));
-        }
 
-     
+  async listen() {
+    const port = await getPort()
+    sw.listen(port)
+    console.log('Listening to port: ' + port)
+    sw.join('b_hive')
+    sw.on('connection', (conn, info) => {
+      const seq = connSeq
+      const peerId = info.id.toString('hex')
+      console.log(`Connected #${seq} to peer: ${peerId}`)
+      if (info.initiator) {
+        try {
+          conn.setKeepAlive(true, 600)
+        } catch (exception) {
+          console.log('exception', exception)
+        }
+      }
+      if (!peers[peerId]) {
+        peers[peerId] = {}
+      }
+      peers[peerId].conn = conn
+      peers[peerId].seq = seq
+      connSeq++
+      // console.log(conn,"conn element");
 
-        conn.on('data', data => {
-          console.log(
-            'Received Message from peer ' + peerId,
-            '----> ' + data.toString()
-          )
-        })
 
+      for (let id in peers) {
+        peers[id].conn.write(JSON.stringify({
+          type: MESSAGE_TYPES.chain,
+          chain: this.blockchain.chain
+        }));
+      }
+
+      conn.on('data', data => {
+        console.log(
+          'Received Message from peer ' + peerId,
+          '----> ' + data.toString()
+        )
+      })
 
       conn.on('close', () => {
         console.log(`Connection ${seq} closed, peer id: ${peerId}`)
@@ -78,9 +75,8 @@ class P2pServer {
         }
       })
     });
-
-    })();
   }
+
   broadcastTransaction(transaction) {
     for (let id in peers) {
       peers[id].conn.write(JSON.stringify({
@@ -93,7 +89,7 @@ class P2pServer {
     peer.conn.write(JSON.stringify(this.blockchain.chain));
   }
   syncChains() {
-    for(let id in peers) {
+    for (let id in peers) {
       peers[id].conn.write(this.sendChain(peer[id]))
     }
   }
@@ -106,30 +102,25 @@ class P2pServer {
   }
 
 
-messageHandler(){
-  for (let id in peers) {
-peer[id].conn.on('message',message => {
-  const data = JSON.parse(message);
-  switch (data.type) {
-    case MESSAGE_TYPES.chain:
-      this.blockchain.replaceChain(data.chain);
-      break;
-    case MESSAGE_TYPES.transaction:
-      this.transactionPool.updateOrAddTransaction(data.transaction);
-      break;
-    case MESSAGE_TYPES.clear_transactions:
-      this.transactionPool.clear();
-      break;
+  messageHandler() {
+    for (let id in peers) {
+      peer[id].conn.on('message', message => {
+        const data = JSON.parse(message);
+        switch (data.type) {
+          case MESSAGE_TYPES.chain:
+            this.blockchain.replaceChain(data.chain);
+            break;
+          case MESSAGE_TYPES.transaction:
+            this.transactionPool.updateOrAddTransaction(data.transaction);
+            break;
+          case MESSAGE_TYPES.clear_transactions:
+            this.transactionPool.clear();
+            break;
+        }
+      });
+
+    }
   }
-});
-
-  }
-
-}
-
-
-
-
 }
 
 module.exports = P2pServer;
