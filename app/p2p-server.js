@@ -8,13 +8,10 @@ const MESSAGE_TYPES = {
   transaction: 'TRANSACTION',
   clear_transactions: 'CLEAR_TRANSACTIONS'
 };
-
 const peers = {}
-
 let connSeq = 0
 const myId = crypto.randomBytes(32)
 console.log('Your identity: ' + myId.toString('hex'))
-
 
 const config = defaults({
   id: myId,
@@ -54,13 +51,12 @@ class P2pServer {
       // console.log(conn,"conn element");
 
 
-      for (let id in peers) {
-        peers[id].conn.write(JSON.stringify({
-          type: MESSAGE_TYPES.chain,
-          chain: this.blockchain.chain
-        }));
-      }
-
+      // for (let id in peers) {
+      //   peers[id].conn.write(JSON.stringify({
+      //     type: MESSAGE_TYPES.chain,
+      //     chain: this.blockchain.chain
+      //   }));
+      // }
       conn.on('data', data => {
         console.log(
           'Received Message from peer ' + peerId,
