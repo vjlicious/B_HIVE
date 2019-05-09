@@ -54,18 +54,31 @@ class P2pServer {
       // console.log(conn,"conn element");
 
 
-      for (let id in peers) {
-        peers[id].conn.write(JSON.stringify({
-          type: MESSAGE_TYPES.chain,
-          chain: this.blockchain.chain
-        }));
-      }
+      // for (let id in peers) {
+      //   peers[id].conn.write(JSON.stringify({
+      //     type: MESSAGE_TYPES.chain,
+      //     chain: this.blockchain.chain
+      //   }));
+      // }
 
-      conn.on('data', data => {
-        console.log(
-          'Received Message from peer ' + peerId,
-          '----> ' + data.toString()
-        )
+      conn.on('data', datas => {
+        // console.log(
+        //   'Received Message from peer ' + peerId,
+        //   '----> ' + datas.toString()
+        // )
+        var data = JSON.parse(datas.toString());
+        console.log("Incoming data", data);
+        switch (data.type) {
+          case MESSAGE_TYPES.chain:
+            this.blockchain.replaceChain(data.chain);
+            break;
+          case MESSAGE_TYPES.transaction:
+            this.transactionPool.updateOrAddTransaction(data.transaction);
+            break;
+          case MESSAGE_TYPES.clear_transactions:
+            this.transactionPool.clear();
+            break;
+        }
       })
 
       conn.on('close', () => {
@@ -75,6 +88,11 @@ class P2pServer {
         }
       })
     });
+
+
+
+
+
   }
 
   broadcastTransaction(transaction) {
@@ -102,25 +120,15 @@ class P2pServer {
   }
 
 
-  messageHandler() {
-    for (let id in peers) {
-      peer[id].conn.on('message', message => {
-        const data = JSON.parse(message);
-        switch (data.type) {
-          case MESSAGE_TYPES.chain:
-            this.blockchain.replaceChain(data.chain);
-            break;
-          case MESSAGE_TYPES.transaction:
-            this.transactionPool.updateOrAddTransaction(data.transaction);
-            break;
-          case MESSAGE_TYPES.clear_transactions:
-            this.transactionPool.clear();
-            break;
-        }
-      });
 
-    }
-  }
+
+
+
+
+
+
+
+
 }
 
 module.exports = P2pServer;
