@@ -39,8 +39,8 @@ class Transaction {
       senderWallet, [
       { amount: senderWallet.balance - amount, 
         address: senderWallet.publicKey },
-      { amount, address: recipient},
-      { filename, filecreatetime, filedestroytime, filesize }
+      { amount, address: recipient}
+      // { filename, filecreatetime, filedestroytime, filesize }
     ]);
   }
 
@@ -55,8 +55,8 @@ class Transaction {
       timestamp: Date.now(),
       amount: senderWallet.balance,
       address: senderWallet.publicKey,
-      signature: senderWallet.sign(ChainUtil.hash(transaction.outputs)),
-      filename : senderWallet.filename 
+      signature: senderWallet.sign(ChainUtil.hash(transaction.outputs))
+      // filename : senderWallet.filename 
     }
   }
 

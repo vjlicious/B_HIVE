@@ -94,10 +94,8 @@ class P2pServer {
       }));
     }
   }
-
-
   sendChain(peer) {
-    peer.conn.write(JSON.stringify(this.blockchain.chain));
+    peer.conn.write(this.blockchain.chain);
   }
 
   syncChains() {
