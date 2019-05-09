@@ -7,21 +7,24 @@ class Wallet {
     this.balance = INITIAL_BALANCE;
     this.keyPair = ChainUtil.genKeyPair();
     this.publicKey = this.keyPair.getPublic().encode('hex');
+    this.filename = {}; //filestats object
   }
 
   toString() {
     return `Wallet -
       publicKey: ${this.publicKey.toString()}
-      balance  : ${this.balance}`
+      balance  : ${this.balance}
+      filename : ${this.filename}`
   }
 
   sign(dataHash) {
     return this.keyPair.sign(dataHash);
   }
+  //data taken above and hashed and generated hash used to verify the signature
 
   createTransaction(recipient, amount, blockchain, transactionPool) {
     this.balance = this.calculateBalance(blockchain);
-
+    
     if (amount > this.balance) {
       console.log(`Amount: ${amount} exceceds current balance: ${this.balance}`);
       return;

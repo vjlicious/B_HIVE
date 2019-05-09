@@ -8,7 +8,7 @@ class Honey {
     this.publickey =  this.keyPair.getPublic().encode('hex')
     }
 
-    toString() {
+    toString() {    
         return `Honey - 
         publicKey: ${this.publicKey.toString()}
         balance  : ${this.balance}`

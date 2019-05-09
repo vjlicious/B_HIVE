@@ -1,4 +1,3 @@
-
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
 const defaults = require('dat-swarm-defaults')
@@ -16,9 +15,9 @@ let connSeq = 0
 const myId = crypto.randomBytes(32)
 console.log('Your identity: ' + myId.toString('hex'))
 
-  
+
 const config = defaults({
-    id: myId, 
+  id: myId,
 })
 
 const sw = Swarm(config);
@@ -29,48 +28,48 @@ class P2pServer {
     this.transactionPool = transactionPool;
     this.sockets = [];
   }
-  listen(){
-  (async () => {
-    const port = await getPort()
-    sw.listen(port)
-    console.log('Listening to port: ' + port)
-    sw.join('b_hive')
-    sw.on('connection', (conn, info) => {
+  listen() {
+    (async () => {
+      const port = await getPort()
+      sw.listen(port)
+      console.log('Listening to port: ' + port)
+      sw.join('b_hive')
+      sw.on('connection', (conn, info) => {
         const seq = connSeq
         const peerId = info.id.toString('hex')
         console.log(`Connected #${seq} to peer: ${peerId}`)
         if (info.initiator) {
-            try {
-                conn.setKeepAlive(true, 600)
-            } catch (exception) {
-                console.log('exception', exception)
-            }
+          try {
+            conn.setKeepAlive(true, 600)
+          } catch (exception) {
+            console.log('exception', exception)
+          }
         }
         if (!peers[peerId]) {
-            peers[peerId] = {}
+          peers[peerId] = {}
         }
         peers[peerId].conn = conn
         peers[peerId].seq = seq
         connSeq++
-
+        // console.log(conn,"conn element");
         for (let id in peers) {
           peers[id].conn.write(JSON.stringify({
             type: MESSAGE_TYPES.chain,
             chain: this.blockchain.chain
           }));
         }
-      
+
         conn.on('data', data => {
-            console.log(
-              'Received Message from peer ' + peerId,
-              '----> ' + data.toString()
-            )
-          })
+          console.log(
+            'Received Message from peer ' + peerId,
+            '----> ' + data.toString()
+          )
+        })
         conn.on('close', () => {
-            console.log(`Connection ${seq} closed, peer id: ${peerId}`)
-            if (peers[peerId].seq === seq) {
-                delete peers[peerId]
-            }
+          console.log(`Connection ${seq} closed, peer id: ${peerId}`)
+          if (peers[peerId].seq === seq) {
+            delete peers[peerId]
+          }
         })
         conn.on('message', message => {
           const data = JSON.parse(message);
@@ -86,36 +85,32 @@ class P2pServer {
               break;
           }
         });
-        const broadcastTransaction= function(transaction)
-        {
-          for (let id in peers) {
-            conn.write(JSON.stringify({
-              type: MESSAGE_TYPES.transaction,
-              transaction:this.transactionPool
-            }));
-          }
-        
-        }
 
-    });
-})();
+      });
+
+    })();
+  }
+  broadcastTransaction(transaction) {
+    for (let id in peers) {
+      peers[id].conn.write(JSON.stringify({
+        type: MESSAGE_TYPES.transaction,
+        transaction: transaction
+      }));
+    }
+  }
+  sendChain(conn) {
+    conn.write(JSON.stringify(this.blockchain.chain));
+  }
+  syncChains() {
+    for(let id in peers) {
+      peers[id].conn.write(this.sendChain(conn))
+    }
+  }
+  broadcastClearTransactions() {
+    this.conn.forEach(conn => conn.write(JSON.stringify({
+      type: MESSAGE_TYPES.clear_transactions
+    })));
   }
 }
-
-
-//   syncChains() {
-//     this.sockets.forEach(socket => this.sendChain(socket));
-//   }
-
-//   broadcastTransaction(transaction) {
-//     this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
-//   }
-
-//   broadcastClearTransactions() {
-//     this.sockets.forEach(socket => socket.send(JSON.stringify({
-//       type: MESSAGE_TYPES.clear_transactions
-//     })));
-//   }
-// }
 
 module.exports = P2pServer;

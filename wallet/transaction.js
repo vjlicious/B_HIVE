@@ -10,7 +10,7 @@ class Transaction {
 
   update(senderWallet, recipient, amount) {
     const senderOutput = this.outputs.find(output => output.address === senderWallet.publicKey);
-
+    
     if (amount > senderOutput.amount) {
       console.log(`Amount: ${amount} exceeds balance.`);
       return;
@@ -29,16 +29,18 @@ class Transaction {
     Transaction.signTransaction(transaction, senderWallet);
     return transaction;
   }
-
-  static newTransaction(senderWallet, recipient, amount) {
+//creating a new transaction 
+  static newTransaction(senderWallet, recipient, amount, filename, filesize, filecreatetime, filedestroytime) {
     if (amount > senderWallet.balance) {
       console.log(`Amount: ${amount} exceeds balance.`);
       return;
     }
-
-    return Transaction.transactionWithOutputs(senderWallet, [
-      { amount: senderWallet.balance - amount, address: senderWallet.publicKey },
-      { amount, address: recipient }
+    return Transaction.transactionWithOutputs(
+      senderWallet, [
+      { amount: senderWallet.balance - amount, 
+        address: senderWallet.publicKey },
+      { amount, address: recipient},
+      { filename, filecreatetime, filedestroytime, filesize }
     ]);
   }
 
@@ -53,7 +55,8 @@ class Transaction {
       timestamp: Date.now(),
       amount: senderWallet.balance,
       address: senderWallet.publicKey,
-      signature: senderWallet.sign(ChainUtil.hash(transaction.outputs))
+      signature: senderWallet.sign(ChainUtil.hash(transaction.outputs)),
+      filename : senderWallet.filename 
     }
   }
 
