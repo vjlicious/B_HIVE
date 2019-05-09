@@ -61,20 +61,7 @@ class P2pServer {
           }));
         }
 
-        conn.on('message', message => {
-          const data = JSON.parse(message);
-          switch (data.type) {
-            case MESSAGE_TYPES.chain:
-              this.blockchain.replaceChain(data.chain);
-              break;
-            case MESSAGE_TYPES.transaction:
-              this.transactionPool.updateOrAddTransaction(data.transaction);
-              break;
-            case MESSAGE_TYPES.clear_transactions:
-              this.transactionPool.clear();
-              break;
-          }
-        });
+     
 
         conn.on('data', data => {
           console.log(
@@ -117,6 +104,32 @@ class P2pServer {
       }));
     }
   }
+
+
+messageHandler(){
+  for (let id in peers) {
+peer[id].conn.on('message',message => {
+  const data = JSON.parse(message);
+  switch (data.type) {
+    case MESSAGE_TYPES.chain:
+      this.blockchain.replaceChain(data.chain);
+      break;
+    case MESSAGE_TYPES.transaction:
+      this.transactionPool.updateOrAddTransaction(data.transaction);
+      break;
+    case MESSAGE_TYPES.clear_transactions:
+      this.transactionPool.clear();
+      break;
+  }
+});
+
+  }
+
+}
+
+
+
+
 }
 
 module.exports = P2pServer;
