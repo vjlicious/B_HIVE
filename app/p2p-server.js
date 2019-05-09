@@ -8,15 +8,13 @@ const MESSAGE_TYPES = {
   transaction: 'TRANSACTION',
   clear_transactions: 'CLEAR_TRANSACTIONS'
 };
-const peers = {}
-let connSeq = 0
-const myId = crypto.randomBytes(32)
-console.log('Your identity: ' + myId.toString('hex'))
-
+const peers = {};
+let connSeq = 0;
+const myId = crypto.randomBytes(32);
+console.log('Your identity: ' + myId.toString('hex'));
 const config = defaults({
   id: myId,
-})
-
+});
 const sw = Swarm(config);
 
 class P2pServer {
@@ -27,6 +25,7 @@ class P2pServer {
   }
 
   async listen() {
+    // console.log(this.blockchain.chain);
     const port = await getPort()
     sw.listen(port)
     console.log('Listening to port: ' + port)
@@ -85,11 +84,6 @@ class P2pServer {
         }
       })
     });
-
-
-
-
-
   }
 
   broadcastTransaction(transaction) {
@@ -100,14 +94,18 @@ class P2pServer {
       }));
     }
   }
+
+
   sendChain(peer) {
-    peer.conn.write(JSON.stringify(this.blockchain.chain));
+    peer.conn.write(this.blockchain.chain.toString());
   }
+
   syncChains() {
     for (let id in peers) {
-      peers[id].conn.write(this.sendChain(peer[id]))
+  this.sendChain(peers[id])
     }
   }
+
   broadcastClearTransactions() {
     for (let id in peers) {
       peers[id].conn.write(JSON.stringify({
@@ -115,17 +113,6 @@ class P2pServer {
       }));
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 module.exports = P2pServer;
