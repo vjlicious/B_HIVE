@@ -13,6 +13,7 @@ const TransactionPool = require('../wallet/transaction-pool');
 const Miner = require('./miner');
 //router calls
 var indexRouter = require('../routes/index');
+var loginRouter = require('../routes/login');
 //function declarations
 const bc = new Blockchain();
 const wallet = new Wallet();
@@ -28,11 +29,12 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(cors())
 app.use(logger('dev'));
-
 app.use(bodyParser.json());
+
 //router declarations
 app.use('/', indexRouter);
-
+app.get('/login', loginRouter)
+//blockchain
 app.get('/blocks', (req, res) => {
   res.json(bc.chain);
   //console.log(res);
@@ -73,4 +75,4 @@ app.get('/public-key', (req, res) => {
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on HTTP port ${HTTP_PORT}`));
-p2pServer.listen();
+// p2pServer.listen();
