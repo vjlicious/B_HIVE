@@ -77,9 +77,9 @@ class P2pServer {
             break;
           case MESSAGE_TYPES.sendregister:
             var fs = require('fs');
-            fs.writeFile('myjsonfile.json', data.file, 'utf8',(err) => {
-              if (err) throw err;}
-              );
+            fs.writeFile('myjsonfile.json', data.file, 'utf8', (err) => {
+              if (err) throw err;
+            });
         }
       })
 
@@ -102,9 +102,9 @@ class P2pServer {
   }
   sendChain(peer) {
     peer.conn.write(JSON.stringify({
-           type: MESSAGE_TYPES.chain,
-           chain: this.blockchain.chain
-        }));
+      type: MESSAGE_TYPES.chain,
+      chain: this.blockchain.chain
+    }));
   }
 
   syncChains() {
@@ -129,10 +129,5 @@ class P2pServer {
     }
 
   }
-
-
-
-
 }
-
 module.exports = P2pServer;

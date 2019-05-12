@@ -22,21 +22,23 @@ router.post('/post', (req, res) => {
     var firstpass = req.body.firstpass;
     var secondpass = req.body.secondpass;
     console.log(email, firstpass, secondpass);
-        fs.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
-            if (err) {
-                console.log(err);
-            } else {
-                obj = JSON.parse(data); //now it an object
-                obj.table.push({
-                    email: `${email}`,
-                    password: `${firstpass}`
-                });
-                json = JSON.stringify(obj); //convert it back to json
-                fs.writeFile('myjsonfile.json', json, 'utf8',(err) => {
-                    if (err) throw err;});
-                p2pServer.sendRegister(json); // write it back 
-            }
-        });
+
+    fs.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            obj = JSON.parse(data); //now it an object
+            obj.table.push({
+                email: `${email}`,
+                password: `${firstpass}`
+            });
+            json = JSON.stringify(obj); //convert it back to json
+            fs.writeFile('myjsonfile.json', json, 'utf8', (err) => {
+                if (err) throw err;
+            });
+            p2pServer.sendRegister(json); // write it back 
+        }
+    });
 
     res.redirect('/login')
 });
