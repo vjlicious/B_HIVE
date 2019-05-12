@@ -4,20 +4,22 @@ const bodyParser = require('body-parser');
 var path = require('path');
 var logger = require('morgan');
 var cors = require('cors')
-
+const url = require('url')
+//p2p server declaration
+const P2pServer = require('./p2p-server.js');
 //module calls
 const Blockchain = require('../blockchain');
-const P2pServer = require('./p2p-server.js');
-const Wallet = require('../wallet');
 const TransactionPool = require('../wallet/transaction-pool');
+const Wallet = require('../wallet');
 const Miner = require('./miner');
 //router calls
-var indexRouter = require('../routes/index');
-var loginRouter = require('../routes/login');
+let indexRouter = require('../routes/index');
+let loginRouter = require('../routes/login');
+let registerRouter = require('../routes/register');
 //function declarations
 const bc = new Blockchain();
-const wallet = new Wallet();
 const tp = new TransactionPool();
+const wallet = new Wallet();
 const p2pServer = new P2pServer(bc, tp);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 //port declaratiom
@@ -30,10 +32,15 @@ app.set('view engine', 'ejs');
 app.use(cors())
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}))
 
 //router declarations
 app.use('/', indexRouter);
-app.get('/login', loginRouter)
+app.get('/login', loginRouter);
+app.use('/register', registerRouter);
+
 //blockchain
 app.get('/blocks', (req, res) => {
   res.json(bc.chain);
@@ -74,5 +81,5 @@ app.get('/public-key', (req, res) => {
   });
 });
 
-app.listen(HTTP_PORT, () => console.log(`Listening on HTTP port ${HTTP_PORT}`));
-// p2pServer.listen();
+app.listen(HTTP_PORT, () => console.log(`B_HIVE on port ${HTTP_PORT}`));
+p2pServer.listen();

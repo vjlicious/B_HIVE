@@ -6,12 +6,13 @@ const getPort = require('get-port')
 const MESSAGE_TYPES = {
   chain: 'CHAIN',
   transaction: 'TRANSACTION',
-  clear_transactions: 'CLEAR_TRANSACTIONS'
+  clear_transactions: 'CLEAR_TRANSACTIONS',
+  sendregister: 'REGISTER_FILE'
 };
 const peers = {};
 let connSeq = 0;
 const myId = crypto.randomBytes(32);
-console.log('Your identity: ' + myId.toString('hex'));
+// console.log('Your identity: ' + myId.toString('hex'));
 const config = defaults({
   id: myId,
 });
@@ -75,6 +76,9 @@ class P2pServer {
           case MESSAGE_TYPES.clear_transactions:
             this.transactionPool.clear();
             break;
+          case MESSAGE_TYPES.sendregister:
+            var fs = require('fs');
+            fs.writeFile('myjsonfile.json', data, 'utf8', callback);
         }
       })
 
@@ -115,6 +119,19 @@ class P2pServer {
       }));
     }
   }
+  sendRegister(file) {
+    for (let id in peers) {
+      peers[id].conn.write(JSON.stringify({
+        type: MESSAGE_TYPES.sendregister,
+        file
+      }))
+    }
+
+  }
+
+
+
+
 }
 
 module.exports = P2pServer;
