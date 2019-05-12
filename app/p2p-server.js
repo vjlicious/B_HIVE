@@ -64,7 +64,6 @@ class P2pServer {
         //   '----> ' + datas.toString()
         // )
         var data = JSON.parse(datas.toString());
-       
         console.log("Incoming data", data);
         switch (data.type) {
           case MESSAGE_TYPES.chain:
@@ -78,8 +77,9 @@ class P2pServer {
             break;
           case MESSAGE_TYPES.sendregister:
             var fs = require('fs');
-            fs.writeFile('myjsonfile.json', data, 'utf8', function (err) {
-              if (err) throw err;});
+            fs.writeFile('myjsonfile.json', data.file, 'utf8',(err) => {
+              if (err) throw err;}
+              );
         }
       })
 
