@@ -20,11 +20,18 @@ const tp = new TransactionPool();
 const p2pServer = new P2pServer(bc, tp);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
+
+
+
+
+
+
 app.use(bodyParser.json());
 
 app.get('/blocks', (req, res) => {
   res.json(bc.chain);
   //console.log(res);
+  p2pServer.syncChains();
 });
 
 app.post('/mine', (req, res) => {
