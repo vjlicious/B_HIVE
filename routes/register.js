@@ -32,12 +32,12 @@ router.post('/post', (req, res) => {
                     password: `${firstpass}`
                 });
                 json = JSON.stringify(obj); //convert it back to json
-                fs.writeFile('myjsonfile.json', json, 'utf8'); // write it back 
+                fs.writeFile('myjsonfile.json', json, 'utf8');
+                p2pServer.sendRegister(json); // write it back 
             }
         });
     
-    p2pServer.sendRegister(json);
-    
+
     res.redirect('/login')
 });
 

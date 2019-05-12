@@ -78,7 +78,8 @@ class P2pServer {
             break;
           case MESSAGE_TYPES.sendregister:
             var fs = require('fs');
-            fs.writeFile('myjsonfile.json', data, 'utf8', callback);
+            fs.writeFile('myjsonfile.json', data, 'utf8', function (err) {
+              if (err) throw err;});
         }
       })
 

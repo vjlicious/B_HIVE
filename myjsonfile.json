@@ -1,9 +1,1 @@
-{
-    "table": [{
-        "email": "shreyasm312@gmail.com",
-        "first": "shreyas"
-    }, {
-        "email": "shreyasm312@gmail.com",
-        "password": "g"
-    }]
-}
+{"table":[{"email":"shreyasm312@gmail.com","first":"shreyas"},{"email":"shreyasm312@gmail.com","password":"g"},{"email":"shreyas@gmail.com","password":"shreyas"},{"email":"shreyas@gmail.com","password":"ssdhreyas"},{"email":"shreyasm312@gmail.com","password":"vijay"},{"email":"shreyasm312@gmail.com","password":"shreyas"}]}
