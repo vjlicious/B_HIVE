@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 app.get('/blocks', (req, res) => {
   res.json(bc.chain);
   //console.log(res);
-  p2pServer.syncChains();
+  // p2pServer.syncChains();
 });
 
 app.post('/mine', (req, res) => {

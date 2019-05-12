@@ -63,8 +63,8 @@ class P2pServer {
         //   '----> ' + datas.toString()
         // )
         var data = JSON.parse(datas.toString());
-        var dataq = datas;
-        console.log("Incoming data", datas);
+       
+        console.log("Incoming data", data);
         switch (data.type) {
           case MESSAGE_TYPES.chain:
             this.blockchain.replaceChain(data.chain);
@@ -96,7 +96,10 @@ class P2pServer {
     }
   }
   sendChain(peer) {
-    peer.conn.write((JSON.stringify(this.blockchain.chain)));
+    peer.conn.write(JSON.stringify({
+           type: MESSAGE_TYPES.chain,
+           chain: this.blockchain.chain
+        }));
   }
 
   syncChains() {

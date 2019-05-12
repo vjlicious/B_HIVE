@@ -18,10 +18,11 @@ class Blockchain {
       const block = chain[i];
       const lastBlock = chain[i-1];
 
-      if (block.lastHash !== lastBlock.hash ||
-          block.hash !== Block.blockHash(block)) {
+      if (block.lastHash !== lastBlock.hash 
+         ) {
         return false;
       }
+      //block.hash !== Block.blockHash(block)
     }
 
     return true;
@@ -35,7 +36,6 @@ class Blockchain {
       console.log('The received chain is not valid.');
       return;
     }
-
     console.log('Replacing blockchain with the new chain.');
     this.chain = newChain;
   }
