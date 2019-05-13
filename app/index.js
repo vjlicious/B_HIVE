@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({
 
 //router declarations
 app.use('/', indexRouter);
-app.get('/login', loginRouter);
+app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 
 //blockchain

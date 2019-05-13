@@ -1,15 +1,1 @@
-{
-    "table": [{
-        "email": "shreyasm312@gmail.com",
-        "first": "shreyas"
-    }, {
-        "email": "shreyasm312@gmail.com",
-        "password": "K"
-    }, {
-        "email": "nja2812mp@gmail.com",
-        "password": "123"
-    }, {
-        "email": "nja2812mp@gmail.com",
-        "password": "shreyamma"
-    }]
-}
+{"table":[{"email":"shreyasm312@gmail.com","first":"shreyas"},{"email":"shreyasm312@gmail.com","password":"K"},{"email":"nja2812mp@gmail.com","password":"123"},{"email":"nja2812mp@gmail.com","password":"shreyamma"},{"email":"shreyasm312@gmail.com","password":"shreyas"}]}

@@ -17,11 +17,28 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
-    <title>B_Fucking Hive | Login</title>
+    <title>B_Hive | Login</title>
 </head>
 
 <body>
-    <h1>Login MothaFuckers</h1>
+    <div class="container">
+        <div class="container holla">
+            <h1 style="text-align:center">LOGIN</h1>
+            <form method="POST" action='login/post'>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
+                        placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">Type em' off!</small>
+                </div>
+                <div class="form-group">
+                    <label for="firstPassword">Password</label>
+                    <input type="password" class="form-control" id="firstpass" name="firstpass" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>
