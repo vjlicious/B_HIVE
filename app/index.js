@@ -16,6 +16,8 @@ const Miner = require('./miner');
 let indexRouter = require('../routes/index');
 let loginRouter = require('../routes/login');
 let registerRouter = require('../routes/register');
+let dashBoardRouter = require('../routes/dashboard');
+let uploadRouter = require('../routes/upload');
 //function declarations
 const bc = new Blockchain();
 const tp = new TransactionPool();
@@ -27,26 +29,24 @@ const HTTP_PORT = process.env.HTTP_PORT || 3001;
 //express app call
 const app = express();
 // view engine setup
-
 app.set('view engine', 'ejs');
-app.use(cors())
+app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }))
-
 //router declarations
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-
+app.use('/dashboard', dashBoardRouter);
+app.use('/upload', uploadRouter);
 //blockchain
 app.get('/blocks', (req, res) => {
   res.json(bc.chain);
   //console.log(res);
 });
-
 app.post('/mine', (req, res) => {
   const block = bc.addBlock(req.body.data);
   console.log(`New block added: ${block.toString()}`);

@@ -2,12 +2,14 @@ const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
 const defaults = require('dat-swarm-defaults')
 const getPort = require('get-port')
+var fs = require('fs');
 
 const MESSAGE_TYPES = {
   chain: 'CHAIN',
   transaction: 'TRANSACTION',
   clear_transactions: 'CLEAR_TRANSACTIONS',
-  sendregister: 'REGISTER_FILE'
+  sendregister: 'REGISTER_FILE',
+  sendfile: 'SEND_FILE'
 };
 const peers = {};
 let connSeq = 0;
@@ -48,41 +50,33 @@ class P2pServer {
       peers[peerId].conn = conn
       peers[peerId].seq = seq
       connSeq++
-      // console.log(conn,"conn element");
-
-
-      // for (let id in peers) {
-      //   peers[id].conn.write(JSON.stringify({
-      //     type: MESSAGE_TYPES.chain,
-      //     chain: this.blockchain.chain
-      //   }));
-      // }
 
       conn.on('data', datas => {
-        // console.log(
-        //   'Received Message from peer ' + peerId,
-        //   '----> ' + datas.toString()
-        // )
-        var data = JSON.parse(datas.toString());
-        console.log("Incoming data", data);
-        switch (data.type) {
-          case MESSAGE_TYPES.chain:
-            this.blockchain.replaceChain(data.chain);
-            break;
-          case MESSAGE_TYPES.transaction:
-            this.transactionPool.updateOrAddTransaction(data.transaction);
-            break;
-          case MESSAGE_TYPES.clear_transactions:
-            this.transactionPool.clear();
-            break;
-          case MESSAGE_TYPES.sendregister:
-            var fs = require('fs');
-            fs.writeFile('myjsonfile.json', data.file, 'utf8', (err) => {
-              if (err) throw err;
-            });
+        if (datas.toString().substring(2, 6) == "type") {
+          var data = JSON.parse(datas.toString());
+          console.log("Incoming data", data);
+          switch (data.type) {
+            case MESSAGE_TYPES.chain:
+              this.blockchain.replaceChain(data.chain);
+              break;
+            case MESSAGE_TYPES.transaction:
+              this.transactionPool.updateOrAddTransaction(data.transaction);
+              break;
+            case MESSAGE_TYPES.clear_transactions:
+              this.transactionPool.clear();
+              break;
+            case MESSAGE_TYPES.sendregister:
+              fs.writeFile('myjsonfile.json', data.file, 'utf8', (err) => {
+                if (err) throw err;
+              });
+            case MESSAGE_TYPES.sendfile:
+              // var filename = data.file.filename;
+              // var filetype = data.file.mimetype;
+              break;
+        }}else {
+          console.log("data")
         }
-      })
-
+        })
       conn.on('close', () => {
         console.log(`Connection ${seq} closed, peer id: ${peerId}`)
         if (peers[peerId].seq === seq) {
@@ -90,6 +84,15 @@ class P2pServer {
         }
       })
     });
+  }
+
+  sendFile(file) {
+    for (let id in peers) {
+      peers[id].conn.write(JSON.stringify({
+        type: MESSAGE_TYPES.sendfile,
+        file
+      }))
+    }
   }
 
   broadcastTransaction(transaction) {
@@ -127,7 +130,6 @@ class P2pServer {
         file
       }))
     }
-
   }
 }
 module.exports = P2pServer;
