@@ -73,7 +73,8 @@ class P2pServer {
               // var filename = data.file.filename;
               // var filetype = data.file.mimetype;
               break;
-        }}else {
+        }
+      } else {
           console.log("data")
         }
         })
