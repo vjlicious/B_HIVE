@@ -21,6 +21,7 @@ router.post('/dashboard', (req, res) => {
     var email = req.body.email;
     var firstpass = req.body.firstpass;
     fs.readFile('myjsonfile.json', handlefile)
+
     function handlefile(err, data) {
         if (err) throw err
         obj = JSON.parse(data) // console.log(obj.logintable[0].publicKey)
@@ -34,14 +35,18 @@ router.post('/dashboard', (req, res) => {
                     let rl = value[id].role;
                     var uid = value[id].id;
                     let amount = wallet.balance;
+                    let space = value[id].amount;
+                    let rpb = value[id].rpb;
                     console.log(value)
                     res.render('dashboard', {
                         id: uid,
                         email: em,
-                        public: pub,
                         role: rl,
+                        public: pub,
                         amount: amount,
-                        value: value
+                        value: value,
+                        space: space,
+                        rpb: rpb
                     })
                     flag = 1;
                 }

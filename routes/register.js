@@ -7,11 +7,12 @@ const Blockchain = require('../blockchain');
 const TransactionPool = require('../wallet/transaction-pool');
 const Wallet = require('../wallet');
 const ChainUtil = require('../chain-util');
-
+const Transaction = require('../wallet/transaction');
 const bc = new Blockchain();
 const tp = new TransactionPool();
 const p2pServer = new P2pServer(bc, tp);
 const wallet = new Wallet();
+const transaction = new Transaction();
 
 router.get('/', (req, res) => {
     res.render('register');
@@ -26,7 +27,8 @@ router.post('/post', (req, res) => {
     var secondpass = req.body.secondpass;
     var role = req.body.dropdown;
     var id = ChainUtil.id();
-    console.log(id, email, firstpass, secondpass,role, wallet.publicKey);
+    var amount = wallet.balance;
+    console.log(id, email, firstpass, secondpass, role, wallet.publicKey, amount);
     fs.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
         if (err) {
             console.log(err);
@@ -37,7 +39,8 @@ router.post('/post', (req, res) => {
                 email: `${email}`,
                 password: `${firstpass}`,
                 role: `${role}`,
-                publicKey: `${wallet.publicKey}`
+                publicKey: `${wallet.publicKey}`,
+                amount: `${wallet.balance}`
             });
             json = JSON.stringify(obj); //convert it back to json
             fs.writeFile('myjsonfile.json', json, 'utf8', (err) => {
