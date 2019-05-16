@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 
 router.post('/post', upload.single('f'), function (req, res) {
     var f = req.file.filename;
-    fs.readFile('./uploads/'+f,"base64", function readFileCallback(err, data) {
+    fs.readFile('./uploads/' + f, "base64", function readFileCallback(err, data) {
         if (err) {
             console.log(err);
         } else {

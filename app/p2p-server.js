@@ -1,4 +1,3 @@
-
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
 const defaults = require('dat-swarm-defaults')
@@ -16,7 +15,7 @@ const MESSAGE_TYPES = {
 const peers = {};
 let connSeq = 0;
 const myId = crypto.randomBytes(32);
-// console.log('Your identity: ' + myId.toString('hex'));
+console.log('Your identity: ' + myId.toString('hex'));
 const config = defaults({
   id: myId,
 });
@@ -75,37 +74,38 @@ class P2pServer {
               // var filename = data.file.filename;
               // var filetype = data.file.mimetype;
               break;
-        }
-      } else {
+          }
+        } else {
           // console.log(datas)
-         
-          var buffer = Buffer.from(datas);
-          // var blob = new Blob( [ datas ], { type: "image/jpeg" } );
-          // // var buffers = buffer.toString();
-          // wstream.write(buffer);
-          // console.log(datas.toString());
-   
-        let data_new = ""
-        for(let i=0; i<buffer.length; i++)
-        {
-            data_new+=String.fromCharCode(buffer[i])
+
+          // var buffer = Buffer.from(datas);
+          // // var blob = new Blob( [ datas ], { type: "image/jpeg" } );
+          // // // var buffers = buffer.toString();
+          // // wstream.write(buffer);
+          // // console.log(datas.toString());
+
+          // let data_new = ""
+          // for (let i = 0; i < buffer.length; i++) {
+          //   data_new += String.fromCharCode(buffer[i])
+          // }
+
+          // console.log(data_new);
+
+
+          // var base64data=Buffer.from(datas.toString(),'base64').toString('base64');
+          // console.log(base64data);
+          var imgsrc = "data:image/png;base64," + datas.toString();
+          // base64Img.img('data:image/png;base64,'+datas.toString(), 'dest', '1', function(err, filepath) {});
+          console.log(datas.toString())
+          let base64Image = imgsrc.split(';base64,').pop();
+          // console.log(d);
+          fs.writeFile('image.jpg', base64Image, {
+            encoding: 'base64'
+          }, function (err) {
+            console.log('File created');
+          });
         }
-       
-      console.log(data_new);
-       
-    
-    // var base64data=Buffer.from(datas.toString(),'base64').toString('base64');
-    // console.log(base64data);
-    var imgsrc = "data:image/png;base64,"+datas.toString();
-    // base64Img.img('data:image/png;base64,'+datas.toString(), 'dest', '1', function(err, filepath) {});
-    let base64Image = imgsrc.split(';base64,').pop();
-    // console.log(d);
-    fs.writeFile('image.png', base64Image, {encoding: 'base64'}, function(err) {
-      console.log('File created');
-  }); 
-          // wstream.end();
-        }
-        })
+      })
       conn.on('close', () => {
         console.log(`Connection ${seq} closed, peer id: ${peerId}`)
         if (peers[peerId].seq === seq) {
@@ -120,7 +120,7 @@ class P2pServer {
       peers[id].conn.write(file)
     }
   }
-    broadcastTransaction(transaction){
+  broadcastTransaction(transaction) {
     for (let id in peers) {
       peers[id].conn.write(JSON.stringify({
         type: MESSAGE_TYPES.transaction,
