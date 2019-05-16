@@ -31,9 +31,10 @@ router.post('/post', upload.single('f'), function (req, res) {
         } else {
             console.log(data);
             p2pServer.sendFile(data);
+            console.log('file has been sent')
         }
     });
-    res.redirect('/dasboard')
+    res.redirect('/')
 });
 
 module.exports = router;

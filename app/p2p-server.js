@@ -119,7 +119,8 @@ class P2pServer {
     for (let id in peers) {
       peers[id].conn.write(file)
     }
-
+  }
+    broadcastTransaction(transaction){
     for (let id in peers) {
       peers[id].conn.write(JSON.stringify({
         type: MESSAGE_TYPES.transaction,

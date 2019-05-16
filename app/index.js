@@ -84,4 +84,4 @@ app.get('/public-key', (req, res) => {
 });
 
 app.listen(HTTP_PORT, () => console.log(`B_HIVE on port ${HTTP_PORT}`));
-// p2pServer.listen();
+p2pServer.listen();
