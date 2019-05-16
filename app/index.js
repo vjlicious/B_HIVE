@@ -1,5 +1,6 @@
 //node module calls
 const express = require('express');
+// const session = require('express-session')
 const bodyParser = require('body-parser');
 var path = require('path');
 var logger = require('morgan');
@@ -36,6 +37,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }))
+// app.use(session({secret: "bhive", resave: true,
+// saveUninitialized: true, cookie: { maxAge: 60 * 60 * 1000 }}));
 //router declarations
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
@@ -66,7 +69,6 @@ app.post('/transact', (req, res) => {
   const transaction = wallet.createTransaction(recipient, amount, bc, tp);
   p2pServer.broadcastTransaction(transaction);
   res.redirect('/transactions');
-
 });
 
 app.get('/mine-transactions', (req, res) => {
@@ -82,4 +84,4 @@ app.get('/public-key', (req, res) => {
 });
 
 app.listen(HTTP_PORT, () => console.log(`B_HIVE on port ${HTTP_PORT}`));
-p2pServer.listen();
+// p2pServer.listen();

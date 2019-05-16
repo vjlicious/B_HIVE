@@ -1,13 +1,15 @@
 {
     "logintable": [{
-        "id": "fa588d50-76e0-11e9-94d0-c7604f0629fc",
-        "email": "a@a.com",
-        "password": "a",
-        "publicKey": "045182e08752ed80191d9966ababd751ace0ccf94093ebf5e9df0fe5536f87d2e4032d63b26a6d7b93b0f42b0f5be7f07c04ce0d8f9af2e3307dce626fcdc9b7f4"
+        "id": "7e89d240-7719-11e9-9060-0daf95b2aaa7",
+        "email": "shreyasm312@gmail.com",
+        "password": "shreyas",
+        "role": "Renter",
+        "publicKey": "044cae65b691a4e0389a0e59f9ceaac6de07cdfdf13fccc8d9d2df25763cf220fd0e32233704502d33348e3316257990bacd3864ab37bee7eb88bf4f3fd577254f"
     }, {
-        "id": "08e04500-76e3-11e9-9b73-63f2db37ae38",
-        "email": "b@b.com",
-        "password": "b",
-        "publicKey": "040ebe7fad38a91b4c955e0052227ddc77fae65ba3899e49f040e3b37e722c1c767d6a6a088ffbcd48cb655a832a297608b52a16ef21aa77b23a4a4a88973b320b"
+        "id": "119d59b0-774e-11e9-9c5d-f9a499d50c94",
+        "email": "viju1997@gmail.com",
+        "password": "vijay",
+        "role": "Lender",
+        "publicKey": "04dc81bed269c1a9d1d8ba75fa2e8e7c02ffeae57499ecff69f30a662e57be8db70444e8e53fcdd8f5bcf376c8065ac4591cd4b33cfe6e80bacf3f9c62e34e62f1"
     }]
 }

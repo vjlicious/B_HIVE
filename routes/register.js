@@ -24,8 +24,9 @@ router.post('/post', (req, res) => {
     var email = req.body.email;
     var firstpass = req.body.firstpass;
     var secondpass = req.body.secondpass;
+    var role = req.body.dropdown;
     var id = ChainUtil.id();
-    console.log(id, email, firstpass, secondpass, wallet.publicKey);
+    console.log(id, email, firstpass, secondpass,role, wallet.publicKey);
     fs.readFile('myjsonfile.json', 'utf8', function readFileCallback(err, data) {
         if (err) {
             console.log(err);
@@ -35,6 +36,7 @@ router.post('/post', (req, res) => {
                 id: `${id}`,
                 email: `${email}`,
                 password: `${firstpass}`,
+                role: `${role}`,
                 publicKey: `${wallet.publicKey}`
             });
             json = JSON.stringify(obj); //convert it back to json
