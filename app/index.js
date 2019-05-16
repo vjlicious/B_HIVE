@@ -19,6 +19,7 @@ let loginRouter = require('../routes/login');
 let registerRouter = require('../routes/register');
 let dashBoardRouter = require('../routes/dashboard');
 let uploadRouter = require('../routes/upload');
+let blockChainRouter = require('../routes/blockchain');
 //function declarations
 const bc = new Blockchain();
 const tp = new TransactionPool();
@@ -45,8 +46,10 @@ app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/dashboard', dashBoardRouter);
 app.use('/upload', uploadRouter);
+app.use('/blockchain',blockChainRouter );
 //blockchain
 app.get('/blocks', (req, res) => {
+  res.render('blockchain',{bc:bc})
   res.json(bc.chain);
   //console.log(res);
 });

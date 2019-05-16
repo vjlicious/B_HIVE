@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -17,7 +16,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
-    <title>B_Hive | Upload</title>
+    <title>B_HIVE | Blockchain</title>
 </head>
 <style>
     .holla {
@@ -32,14 +31,9 @@
 <body>
     <div class="container">
         <div class="container holla">
-            <h1>Upload</h1>
-            <form action="/upload/post" method="post" enctype="multipart/form-data">
-                <input type="file" name="f" />
-                <button type="submit">submit</button>
-            </form>
-            <h1>File Being sent to:</h1>
-            <% for (var i = 0; i < value.length; i++) { %>
-            <h5><%= value[i].email %></h5>
+            <h1>Blockchain</h1>
+            <% for (var i = 0; i < bc.chain.length; i++) { %>
+            <%= bc.chain[i] %>
             <% } %>
         </div>
     </div>

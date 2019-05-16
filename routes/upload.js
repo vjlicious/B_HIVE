@@ -13,16 +13,11 @@ const bc = new Blockchain();
 const tp = new TransactionPool();
 const p2pServer = new P2pServer(bc, tp);
 const wallet = new Wallet();
-const miner = new Miner(bc, tp, wallet, p2pServer);
+// const miner = new Miner(bc, tp, wallet, p2pServer);
 
 var upload = multer({
     dest: 'uploads/'
 })
-
-router.get('/', (req, res) => {
-    res.render('upload');
-});
-
 router.post('/post', upload.single('f'), function (req, res) {
     var f = req.file.filename;
     fs.readFile('./uploads/' + f, "base64", function readFileCallback(err, data) {
@@ -36,5 +31,38 @@ router.post('/post', upload.single('f'), function (req, res) {
     });
     res.redirect('/')
 });
+
+router.get('/', (req, res) => {
+    fs.readFile('myjsonfile.json', handlefile)
+    function handlefile(err, data) {
+        if (err) throw err
+        obj = JSON.parse(data) // console.log(obj.logintable[0].publicKey)
+        for (let id in obj) {
+            let value = obj[id];
+            for (let id in value) {
+                    let pub = value[id].publicKey;
+                    let em = value[id].email;
+                    let rl = value[id].role;
+                    var uid = value[id].id;
+                    let amount = wallet.balance;
+                    let space = value[id].amount;
+                    let rpb = value[id].rpb;
+                    console.log(value)
+                    res.render('upload', {
+                        id: uid,
+                        email: em,
+                        role: rl,
+                        public: pub,
+                        amount: amount,
+                        value: value,
+                        space: space,
+                        rpb: rpb
+                    })
+            }
+        }
+    }
+});
+
+
 
 module.exports = router;

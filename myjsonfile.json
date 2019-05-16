@@ -7,7 +7,7 @@
         "publicKey": "044cae65b691a4e0389a0e59f9ceaac6de07cdfdf13fccc8d9d2df25763cf220fd0e32233704502d33348e3316257990bacd3864ab37bee7eb88bf4f3fd577254f",
         "amount": "500",
         "space": "500",
-        "rpb":   "10"
+        "rpb": "10"
     }, {
         "id": "119d59b0-774e-11e9-9c5d-f9a499d50c94",
         "email": "viju1997@gmail.com",
@@ -16,6 +16,20 @@
         "publicKey": "04dc81bed269c1a9d1d8ba75fa2e8e7c02ffeae57499ecff69f30a662e57be8db70444e8e53fcdd8f5bcf376c8065ac4591cd4b33cfe6e80bacf3f9c62e34e62f1",
         "amount": "500",
         "space": "500",
-        "rpb":   "10"
+        "rpb": "10"
+    }, {
+        "id": "d8b5c830-77a2-11e9-b948-dd6fb9387264",
+        "email": "a@a.com",
+        "password": "a",
+        "role": "Lender",
+        "publicKey": "04c00e8fe9a60f793c5156f944bcacc04bacf6b5392f6fa61ecb4908630886472ec67c797eb43a1f4a01c21006ef732f7823fa2989da16419ee6ed33f78ccf0432",
+        "amount": "500"
+    }, {
+        "id": "db596ff0-77ad-11e9-b76b-cf120510fc6c",
+        "email": "b@v.com",
+        "password": "b",
+        "role": "Renter",
+        "publicKey": "0481fcd05817fb77e2079014cb2c06e3a97a0040169abf6807bf1fc85e55664a872ad3df98cab059e96feba261382f026bf8e4482669b11deb9631483b18bd3273",
+        "amount": "500"
     }]
 }
